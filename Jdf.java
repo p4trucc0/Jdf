@@ -31,6 +31,22 @@ public class Jdf{
 		return;
 	}
 
+	// remove existing column
+	public void removeColumn(String cname)
+	{
+		int i;
+		for (i = 0; i < this.ColumnNames.size(); i++)
+		{
+			if (this.ColumnNames.get(i).equals(cname))
+			{
+				this.ColumnNames.remove(i);
+				this.Columns.remove(i);
+				break;
+			}
+		}
+		return;
+	}
+
 	// extract another dataframe with given indices.
 	public Jdf cutOnIndex(int[] ind2cut)
 	{
