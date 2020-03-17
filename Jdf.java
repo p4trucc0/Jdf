@@ -301,6 +301,83 @@ public class Jdf{
 		return;
 	}
 
+	// Add Day value
+	public void addDaysFromData()
+	{
+		int d_year, d_month, d_day;
+		boolean data_available = false;
+		String prv_str;
+		int i;
+		int i_d = 0;
+		int days;
+		int ind_g = this.ColumnNames.size();
+		for (i = 0; i < this.ColumnNames.size(); i++)
+		{
+			if (this.ColumnNames.get(i).equals("data"))
+			{
+				i_d = i;
+				data_available = true;
+				break;
+			}
+		}
+		if (data_available)
+		{
+			this.addEmptyColumn("giorni", "Double");
+			for (i = 0; i < this.rows; i++)
+			{
+				prv_str = this.Columns.get(i_d).retrieveParse(i, 0, false);
+				d_year = Integer.parseInt(prv_str.split(" ")[0].split("-")[0]);
+				d_month = Integer.parseInt(prv_str.split(" ")[0].split("-")[1]);
+				d_day = Integer.parseInt(prv_str.split(" ")[0].split("-")[2]);
+				days = (366*(d_year - 2020));
+				switch (d_month)
+				{
+					case 1:
+						days += 0;
+						break;
+					case 2:
+						days += 31;
+						break;
+					case 3:
+						days += 60;
+						break;
+					case 4:
+						days += 91;
+						break;
+					case 5:
+						days += 121;
+						break;
+					case 6:
+						days += 152;
+						break;
+					case 7:
+						days += 182;
+						break;
+					case 8:
+						days += 213;
+						break;
+					case 9:
+						days += 244;
+						break;
+					case 10:
+						days += 274;
+						break;
+					case 11:
+						days += 305;
+						break;
+					case 12:
+						days += 335;
+						break;
+					default:
+						break;
+				}
+				days += d_day;
+				this.Columns.get(ind_g).al_double.set(i, new Double(days));
+			}
+		}
+		return;
+	}
+
 	// create an empty series.
 	public Series emptySeries(String ntype)
 	{
