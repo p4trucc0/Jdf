@@ -100,6 +100,31 @@ public class Jdf{
 		return out;
 	}
 
+	// Extract another dataframe based on string value
+	public double[] getColAsDouble(String colname)
+	{
+		double[] out = new double[0];
+		int i;
+		int n_col = this.ColumnNames.size();
+		int i_f = n_col + 1;
+		for (i = 0; i < n_col; i++)
+		{
+			if (this.ColumnNames.get(i).equals(colname))
+			{
+				if (this.Columns.get(i).type.equals("Double"))
+				{
+					i_f = i;
+				}
+				break;
+			}
+		}
+		if (i_f < n_col)
+		{
+			out = this.Columns.get(i).asDouble();
+		}
+		return out;
+	}
+
 	// Raw Representation. TODO improve it in pandas-like style
 	public void printRaw()
 	{
