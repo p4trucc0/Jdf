@@ -5,6 +5,7 @@ import java.io.PrintStream;
 import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.net.URL;
 
 public class Jdf{
 
@@ -35,12 +36,66 @@ public class Jdf{
 		Jdf out = new Jdf();
 		int i_col;
 		int n_col = this.ColumnNames.size();
-		for (i_col = 1; i_col < n_col; i_col++)
+		for (i_col = 0; i_col < n_col; i_col++)
 		{
 			out.ColumnNames.add(this.ColumnNames.get(i_col));
 			out.Columns.add(this.Columns.get(i_col).extrInd(ind2cut));
 		}
 		out.rows = ind2cut.length;
+		return out;
+	}
+
+	// Append other df. For now, only same columns.
+	public void append(Jdf other)
+	{
+		Boolean permitted = true;
+		int i;
+		int n_col = this.ColumnNames.size();
+		int n_oth = other.ColumnNames.size();
+		if (n_col == n_oth)
+		{
+			for (i = 0; i < n_col; i++)
+			{
+				if (this.ColumnNames.get(i) != other.ColumnNames.get(i))
+				{
+					permitted = false;
+				}
+			}
+			if (permitted)
+			{
+				for (i = 0; i < n_col; i++)
+				{
+					this.Columns.get(i).append(other.Columns.get(i));
+				}
+			}
+		}
+		this.rows += other.rows;
+		return;
+	}
+
+	// Extract another dataframe based on string value
+	public Jdf cutOnValueString(String colname, String colval)
+	{
+		Jdf out = new Jdf();
+		int i;
+		int n_col = this.ColumnNames.size();
+		int i_f = n_col + 1;
+		for (i = 0; i < n_col; i++)
+		{
+			if (this.ColumnNames.get(i).equals(colname))
+			{
+				if (this.Columns.get(i).type.equals("String"))
+				{
+					i_f = i;
+				}
+				break;
+			}
+		}
+		if (i_f < n_col)
+		{
+			int[] ind_to_cut = this.Columns.get(i_f).indWhereString(colval);
+			out = this.cutOnIndex(ind_to_cut);
+		}
 		return out;
 	}
 
@@ -291,6 +346,98 @@ public class Jdf{
 				}
 			}
 			return out;
+		}
+
+		// Return indices corresponding to specified value. For now only String and Integer
+		public int[] indWhereString(String cval)
+		{
+			ArrayList<Integer> ind_al = new ArrayList<Integer>();
+			int i; 
+			int n;
+			if (this.type == "String")
+			{
+				for (i = 0; i < numel; i++)
+				{
+					if (al_string.get(i).equals(cval))
+					{
+						ind_al.add(i);
+					}
+				}
+				n = ind_al.size();
+			}
+			else 
+			{
+				n = 0;
+			}
+			int[] out = new int[n];
+			for (i = 0; i < n; i++)
+			{
+				out[i] = ind_al.get(i);
+			}
+			return out;
+		}
+
+		// Return indices corresponding to specified value. For now only String and Integer
+		public int[] indWhereInteger(int cval)
+		{
+			ArrayList<Integer> ind_al = new ArrayList<Integer>();
+			int i; 
+			int n;
+			if (this.type == "Integer")
+			{
+				for (i = 0; i < numel; i++)
+				{
+					if (al_int.get(i) == cval)
+					{
+						ind_al.add(i);
+					}
+				}
+				n = ind_al.size();
+			}
+			else 
+			{
+				n = 0;
+			}
+			int[] out = new int[n];
+			for (i = 0; i < n; i++)
+			{
+				out[i] = ind_al.get(i);
+			}
+			return out;
+		}
+
+		// Append other
+		public void append(Series other)
+		{
+			int i, n;
+			if (this.type == other.type)
+			{
+				if (this.type == "Integer")
+				{
+					n = other.numel;
+					for (i = 0; i < n; i++)
+					{
+						this.addInteger(other.al_int.get(i));
+					}
+				}
+				if (this.type == "Double")
+				{
+					n = other.numel;
+					for (i = 0; i < n; i++)
+					{
+						this.addDouble(other.al_double.get(i));
+					}
+				}
+				if (this.type == "String")
+				{
+					n = other.numel;
+					for (i = 0; i < n; i++)
+					{
+						this.addString(other.al_string.get(i));
+					}
+				}
+			}
+			return;
 		}
 
 	}
