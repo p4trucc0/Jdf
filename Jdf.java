@@ -136,6 +136,37 @@ public class Jdf{
 		}
 	}
 
+	// Prettier representation
+	public String prettyString(int c_width)
+	{
+		int i_c; // cols
+		int i_r; // rows
+		int n_c = this.ColumnNames.size();
+		String prv = "";
+		String out = "";
+		for (i_c = 0; i_c < n_c; i_c++)
+		{
+			prv = this.ColumnNames.get(i_c);
+			while (prv.length() < c_width)
+			{
+				prv = " ".concat(prv);
+			}
+			out = out.concat(prv.concat(" "));
+		}
+		out = out.concat("\n");
+		// down to rows.
+		for (i_r = 0; i_r < this.rows; i_r++)
+		{
+			for (i_c = 0; i_c < n_c; i_c++)
+			{
+				prv = this.Columns.get(i_c).retrieveParse(i_r, c_width, true);
+				out = out.concat(prv.concat(" "));
+			}
+			out = out.concat("\n");
+		}
+		return out;
+	}
+
 	// read a csv file and fill the current dataframe on the go
 	public void fillFromCsv(String csv_filename) throws IOException
 	{
@@ -284,6 +315,43 @@ public class Jdf{
 			}
 			this.numel++;
 			return;
+		}
+
+		// Gets element from specified position and returns it as string (no decimals)
+		public String retrieveParse(int ind, int out_len, boolean double_as_int) // out_len: length of the output string.
+		{
+			String out = "";
+			if (ind >= this.numel)
+			{
+				out = "OOB";
+			}
+			else
+			{
+				if (this.type.equals("Double"))
+				{
+					if (double_as_int)
+					{
+						out = this.al_double.get(ind).toString().split("\\.")[0];
+					}
+					else
+					{
+						out = this.al_double.get(ind).toString();
+					}
+				}
+				if (this.type.equals("Integer"))
+				{
+					out = this.al_int.get(ind).toString();
+				}
+				if (this.type.equals("String"))
+				{
+					out = this.al_string.get(ind);
+				}
+				while (out.length() < out_len)
+				{
+					out = " ".concat(out);
+				}
+			}
+			return out;
 		}
 
 		// Add element functions. For cutting.
