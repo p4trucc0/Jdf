@@ -387,6 +387,45 @@ public class Jdf{
 			return out;
 		}
 
+		// retrieve unique values of strings contained in series.
+		public String[] uniqueStrings()
+		{
+			ArrayList<String> str_out = new ArrayList<String>();
+			int n;
+			int i, j;
+			boolean already_there;
+			if (this.type == "String")
+			{
+				for (i = 0; i < this.numel; i++) // cycle on elements of this
+				{
+					already_there = false;
+					for (j = 0; j < str_out.size(); j++)
+					{
+						if (str_out.get(j).equals(this.al_string.get(i)))
+						{
+							already_there = true;
+							break;
+						}
+					}
+					if (!already_there)
+					{
+						str_out.add(this.al_string.get(i));
+					}
+				}
+			}
+			else
+			{
+				n = 0;
+			}
+			n = str_out.size();
+			String[] out = new String[n];
+			for (i = 0; i < n; i++)
+			{
+				out[i] = str_out.get(i);
+			}
+			return out;
+		}
+
 		// Return indices corresponding to specified value. For now only String and Integer
 		public int[] indWhereString(String cval)
 		{
