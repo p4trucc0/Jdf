@@ -5,6 +5,7 @@ import java.io.PrintStream;
 import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
 
 public class Jdf{
@@ -114,6 +115,19 @@ public class Jdf{
 	public void fillFromCsv(String csv_filename) throws IOException
 	{
 		BufferedReader inb = new BufferedReader(new FileReader(csv_filename));
+		this.fillFromBufferReader(inb);
+	}
+
+	// read csv file from url
+	public void fillFromUrl(String url_str) throws IOException
+	{
+		URL url = new URL(url_str);
+		BufferedReader inb = new BufferedReader(new InputStreamReader(url.openStream()));
+		this.fillFromBufferReader(inb);
+	}
+
+	public void fillFromBufferReader(BufferedReader inb) throws IOException
+	{
 		String linea = "";
 		String elem = "";
 		String[] lsep;
