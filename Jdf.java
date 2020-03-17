@@ -40,11 +40,55 @@ public class Jdf{
 			if (this.ColumnNames.get(i).equals(cname))
 			{
 				this.ColumnNames.remove(i);
-				this.Columns.remove(i);
+				this.Columns.remove(i);	
 				break;
 			}
 		}
 		return;
+	}
+
+	// Retrieve a list of String (i.e. groupable) fields
+	public String[] getStringFields()
+	{
+		ArrayList<String> str_out = new ArrayList<String>();
+		int n;
+		int i;
+		for (i = 0; i < this.ColumnNames.size(); i++)
+		{
+			if (this.Columns.get(i).type.equals("String"))
+			{
+				str_out.add(this.ColumnNames.get(i));
+			}
+		}
+		n = str_out.size();
+		String[] out = new String[n];
+		for (i = 0; i < n; i++)
+		{
+			out[i] = str_out.get(i);
+		}
+		return out;
+	}
+
+	// Retrieve a list of Double fields
+	public String[] getDoubleFields()
+	{
+		ArrayList<String> str_out = new ArrayList<String>();
+		int n;
+		int i;
+		for (i = 0; i < this.ColumnNames.size(); i++)
+		{
+			if (this.Columns.get(i).type.equals("Double"))
+			{
+				str_out.add(this.ColumnNames.get(i));
+			}
+		}
+		n = str_out.size();
+		String[] out = new String[n];
+		for (i = 0; i < n; i++)
+		{
+			out[i] = str_out.get(i);
+		}
+		return out;
 	}
 
 	// extract another dataframe with given indices.
