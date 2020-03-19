@@ -47,6 +47,37 @@ public class Jdf{
 		return;
 	}
 
+	public Series getColByName(String cname)
+	{
+		int i;
+		int i_fnd = 0;
+		boolean found = false;
+		for (i = 0; i < this.ColumnNames.size(); i++)
+		{
+			if (this.ColumnNames.get(i).equals(cname))
+			{
+				found = true;
+				i_fnd = i;
+				break;
+			}
+		}
+		if (found)
+		{
+			return this.Columns.get(i_fnd);
+		}
+		else
+		{
+			return new Series("Integer");
+		}
+	}
+
+	public void sortOnColumn(String cname, boolean ascending)
+	{
+		int[] sort_ind = getColByName(cname).sort(ascending);
+		this.selfCutOnIndex(sort_ind);
+		return;
+	}
+
 	// Retrieve a list of String (i.e. groupable) fields
 	public String[] getStringFields()
 	{
@@ -104,6 +135,20 @@ public class Jdf{
 		}
 		out.rows = ind2cut.length;
 		return out;
+	}
+
+	// like previous one but on self.
+	public void selfCutOnIndex(int[] ind2cut)
+	{
+		int i_col;
+		int n_col = this.ColumnNames.size();
+		for (i_col = 0; i_col < n_col; i_col++)
+		{
+			Series ns = this.Columns.get(i_col);
+			this.Columns.set(i_col, ns.extrInd(ind2cut));
+		}
+		this.rows = ind2cut.length;
+		return;
 	}
 
 	// Append other df. For now, only same columns.
