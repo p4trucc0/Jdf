@@ -1013,6 +1013,34 @@ public class Jdf{
 			return out;
 		}
 
+		// element-by-element differential.
+		// TODO: do the same for Integers
+		public Series diff()
+		{
+			Series out;
+			int i;
+			if (this.type == "Double")
+			{
+				out = new Series("Double", this.numel);
+				for (i = 0; i < this.numel; i++)
+				{
+					if (i == 0)
+					{
+						out.setDouble(0, 0.0);
+					}
+					else
+					{
+						out.setDouble(i, this.getDouble(i) - this.getDouble(i - 1));
+					}
+				}
+			}
+			else
+			{
+				out = new Series("Double", this.numel);
+			}
+			return out;
+		}
+
 		public Series mathOpSeries(Series other, String operator)
 		{
 			Series out;
