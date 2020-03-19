@@ -1013,6 +1013,74 @@ public class Jdf{
 			return out;
 		}
 
+		public Series mathOpSeries(Series other, String operator)
+		{
+			Series out;
+			if ((this.type == "Double") && (other.type == "Double") && (this.numel == other.numel))
+			{
+				out = new Series(this.type, this.numel);
+				int i;
+				double prv;
+				switch (operator)
+				{
+					case "+":
+						for (i = 0; i < this.numel; i++)
+						{
+							prv = this.getDouble(i) + other.getDouble(i);
+							out.setDouble(i, prv);
+						}
+						break;
+					case "-":
+						for (i = 0; i < this.numel; i++)
+						{
+							prv = this.getDouble(i) - other.getDouble(i);
+							out.setDouble(i, prv);
+						}
+						break;
+					case "*":
+						for (i = 0; i < this.numel; i++)
+						{
+							prv = this.getDouble(i) * other.getDouble(i);
+							out.setDouble(i, prv);
+						}
+						break;
+					case "/":
+						for (i = 0; i < this.numel; i++)
+						{
+							prv = this.getDouble(i) / other.getDouble(i);
+							out.setDouble(i, prv);
+						}
+						break;
+					case "^":
+						for (i = 0; i < this.numel; i++)
+						{
+							prv = Math.pow(this.getDouble(i),other.getDouble(i));
+							out.setDouble(i, prv);
+						}
+						break;
+					case "\\":
+						for (i = 0; i < this.numel; i++)
+						{
+							prv = other.getDouble(i) / this.getDouble(i);
+							out.setDouble(i, prv);
+						}
+						break;
+					default:
+						for (i = 0; i < this.numel; i++)
+						{
+							prv = this.getDouble(i);
+							out.setDouble(i, prv);
+						}
+						break;
+				}
+			}
+			else
+			{
+				out = new Series(this.type, this.numel);
+			}
+			return out;
+		}
+
 		// Append other
 		public void append(Series other)
 		{
