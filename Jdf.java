@@ -71,6 +71,7 @@ public class Jdf{
 		}
 	}
 
+
 	public void sortOnColumn(String cname, boolean ascending)
 	{
 		int[] sort_ind = getColByName(cname).sort(ascending);
@@ -567,6 +568,49 @@ public class Jdf{
 			return;
 		}
 
+		// TODO setParse and getParse
+		public void setDouble(int ind, Double nel)
+		{
+			if (this.type.equals("Double"))
+			{
+				this.al_double.set(ind, nel);
+			}
+			return;
+		}
+
+		public void setInteger(int ind, Integer nel)
+		{
+			if (this.type.equals("Integer"))
+			{
+				this.al_int.set(ind, nel);
+			}
+			return;
+		}
+
+		public void setString(int ind, String nel)
+		{
+			if (this.type.equals("String"))
+			{
+				this.al_string.set(ind, nel);
+			}
+			return;
+		}
+
+		public double getDouble(int ind)
+		{
+			return this.al_double.get(ind);
+		}
+
+		public int getInteger(int ind)
+		{
+			return this.al_int.get(ind);
+		}
+
+		public String getString(int ind)
+		{
+			return this.al_string.get(ind);
+		}
+
 		// print content, raw
 		public void printRaw()
 		{
@@ -894,6 +938,77 @@ public class Jdf{
 			for (i = 0; i < this.numel; i++)
 			{
 				out[i] = ind_al.get(i);
+			}
+			return out;
+		}
+
+		// Math operations on self and a scalar. For double only (for now)
+		// TODO: Implement operations for integers
+		// TODO: adapt to setters and getters.
+		public Series mathOpScalar(double operand, String operator)
+		{
+			Series out;
+			if (this.type == "Double")
+			{
+				out = new Series(this.type, this.numel);
+				int i;
+				double prv;
+				switch (operator)
+				{
+					case "+":
+						for (i = 0; i < this.numel; i++)
+						{
+							prv = this.getDouble(i) + operand;
+							out.setDouble(i, prv);
+						}
+						break;
+					case "-":
+						for (i = 0; i < this.numel; i++)
+						{
+							prv = this.getDouble(i) - operand;
+							out.setDouble(i, prv);
+						}
+						break;
+					case "*":
+						for (i = 0; i < this.numel; i++)
+						{
+							prv = this.getDouble(i) * operand;
+							out.setDouble(i, prv);
+						}
+						break;
+					case "/":
+						for (i = 0; i < this.numel; i++)
+						{
+							prv = this.getDouble(i) / operand;
+							out.setDouble(i, prv);
+						}
+						break;
+					case "^":
+						for (i = 0; i < this.numel; i++)
+						{
+							prv = Math.pow(this.getDouble(i),operand);
+							out.setDouble(i, prv);
+						}
+						break;
+					case "\\":
+						for (i = 0; i < this.numel; i++)
+						{
+							prv = operand / this.getDouble(i);
+							out.setDouble(i, prv);
+						}
+						break;
+					default:
+						for (i = 0; i < this.numel; i++)
+						{
+							prv = this.getDouble(i);
+							out.setDouble(i, prv);
+						}
+						break;
+				}
+			}
+			else
+			{
+				out = new Series(this.type, this.numel);
 			}
 			return out;
 		}
