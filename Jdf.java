@@ -689,6 +689,170 @@ public class Jdf{
 			return out;
 		}
 
+		// Return an array of integers corresponding to sort order
+		public int[] sort(boolean ascending)
+		{
+			ArrayList<Integer> ind_al = new ArrayList<Integer>();
+			int i; 
+			int n;
+			int j;
+			boolean added = false;
+			if ((this.type == "Double") || (this.type == "String") || (this.type == "Integer"))
+			{
+				if (this.type == "Double")
+				{
+					ArrayList<Double> elem_al = new ArrayList<Double>();
+					for (i = 0; i < this.numel; i++)
+					{
+						added = false;
+						if (i == 0)
+						{
+							elem_al.add(this.al_double.get(i));
+							ind_al.add(i);
+							added = true;
+						}
+						else
+						{
+							for (j = 0; j < ind_al.size(); j++)
+							{
+								if (ascending)
+								{
+									if (elem_al.get(j) > this.al_double.get(i))
+									{
+										elem_al.add(j, this.al_double.get(i));
+										ind_al.add(j, i);
+										added = true;
+										break;
+									}
+								}	
+								else
+								{
+									if (elem_al.get(j) < this.al_double.get(i))
+									{
+										elem_al.add(j, this.al_double.get(i));
+										ind_al.add(j, i);
+										added = true;
+										break;
+									}
+								}
+							}
+							if (!added)
+							{
+								elem_al.add(this.al_double.get(i));
+								ind_al.add(i);
+								added = true;
+							}
+						}
+					}
+				}
+				if (this.type == "Integer")
+				{
+					ArrayList<Integer> elem_al = new ArrayList<Integer>();
+					for (i = 0; i < this.numel; i++)
+					{
+						added = false;
+						if (i == 0)
+						{
+							elem_al.add(this.al_int.get(i));
+							ind_al.add(i);
+							added = true;
+						}
+						else
+						{
+							for (j = 0; j < ind_al.size(); j++)
+							{
+								if (ascending)
+								{
+									if (elem_al.get(j) > this.al_int.get(i))
+									{
+										elem_al.add(j, this.al_int.get(i));
+										ind_al.add(j, i);
+										added = true;
+										break;
+									}
+								}	
+								else
+								{
+									if (elem_al.get(j) < this.al_int.get(i))
+									{
+										elem_al.add(j, this.al_int.get(i));
+										ind_al.add(j, i);
+										added = true;
+										break;
+									}
+								}
+							}
+							if (!added)
+							{
+								elem_al.add(this.al_int.get(i));
+								ind_al.add(i);
+								added = true;
+							}
+						}
+					}
+				}
+				if (this.type == "String")
+				{
+					ArrayList<String> elem_al = new ArrayList<String>();
+					for (i = 0; i < this.numel; i++)
+					{
+						added = false;
+						if (i == 0)
+						{
+							elem_al.add(this.al_string.get(i));
+							ind_al.add(i);
+							added = true;
+						}
+						else
+						{
+							for (j = 0; j < ind_al.size(); j++)
+							{
+								if (ascending)
+								{
+									if (elem_al.get(j).compareTo(this.al_string.get(i)) > 0)
+									{
+										elem_al.add(j, this.al_string.get(i));
+										ind_al.add(j, i);
+										added = true;
+										break;
+									}
+								}	
+								else
+								{
+									if (elem_al.get(j).compareTo(this.al_string.get(i)) < 0)
+									{
+										elem_al.add(j, this.al_string.get(i));
+										ind_al.add(j, i);
+										added = true;
+										break;
+									}
+								}
+							}
+							if (!added)
+							{
+								elem_al.add(this.al_string.get(i));
+								ind_al.add(i);
+								added = true;
+							}
+						}
+					}
+				}
+			}
+			else 
+			{
+				for (i = 0; i < this.numel; i++)
+				{
+					ind_al.add(i);
+				}
+			}
+			int[] out = new int[this.numel];
+			for (i = 0; i < this.numel; i++)
+			{
+				out[i] = ind_al.get(i);
+			}
+			return out;
+		}
+
 		// Append other
 		public void append(Series other)
 		{
