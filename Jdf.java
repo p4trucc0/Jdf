@@ -78,10 +78,24 @@ public class Jdf{
 		}
 		else
 		{
-			return new Series("Integer");
+			return new Series("Double", this.rows);
 		}
 	}
 
+	// TODO: Error handling is needed here!
+	public void mathOpScalar(String dst_name, String src_name, double operand, String operator)
+	{
+		Series s1 = this.getColByName(src_name).mathOpScalar(operand, operator);
+		this.addColumn(dst_name, s1);
+		return;
+	}
+
+	public void mathOpTwoCol(String dst_name, String src1_name, String src2_name, String operator)
+	{
+		Series s1 = this.getColByName(src1_name).mathOpSeries(this.getColByName(src2_name), operator);
+		this.addColumn(dst_name, s1);
+		return;
+	}
 
 	public void sortOnColumn(String cname, boolean ascending)
 	{
