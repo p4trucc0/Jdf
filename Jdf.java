@@ -31,6 +31,17 @@ public class Jdf{
 		return;
 	}
 
+	// TODO: Check if the current name is already in names.
+	public void addColumn(String cname, Series nse)
+	{
+		if (nse.numel == this.rows)
+		{
+			this.ColumnNames.add(cname);
+			this.Columns.add(nse);
+		}
+		return;
+	}
+
 	// remove existing column
 	public void removeColumn(String cname)
 	{
