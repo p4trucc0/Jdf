@@ -1168,6 +1168,64 @@ public class Jdf{
 			return;
 		}
 
+		//return minimum if double
+		public double minDouble()
+		{
+			double out = 0.0;
+			if (this.type == "Double")
+			{
+				int i;
+				for (i = 0; i < this.al_double.size(); i++)
+				{
+					if (i == 0)
+					{
+						out = this.al_double.get(i);
+					}
+					else
+					{
+						if (this.al_double.get(i) < out)
+						{
+							out = this.al_double.get(i);
+						}
+					}
+				}
+				return out;
+			}
+			else
+			{
+				return (double)(0.0);
+			}
+		}
+
+		//return maximum if double
+		public double maxDouble()
+		{
+			double out = 0.0;
+			if (this.type == "Double")
+			{
+				int i;
+				for (i = 0; i < this.al_double.size(); i++)
+				{
+					if (i == 0)
+					{
+						out = this.al_double.get(i);
+					}
+					else
+					{
+						if (this.al_double.get(i) > out)
+						{
+							out = this.al_double.get(i);
+						}
+					}
+				}
+				return out;
+			}
+			else
+			{
+				return (double)(0.0);
+			}
+		}
+
 	}
 
 }
