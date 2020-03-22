@@ -136,6 +136,13 @@ public class Jdf{
 		return;
 	}
 
+	public void diffColumn(String dst_name, String src_name)
+	{
+		Series s1 = this.getColByName(src_name).diff();
+		this.addColumn(dst_name, s1);
+		return;
+	}
+
 	public void sortOnColumn(String cname, boolean ascending)
 	{
 		int[] sort_ind = getColByName(cname).sort(ascending);
