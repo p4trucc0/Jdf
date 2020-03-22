@@ -507,6 +507,25 @@ public class Jdf{
 			}
 		}
 
+		// Get length
+		public int getLength()
+		{
+			int out = 0;
+			if (this.type.equals("Double"))
+			{
+				out = this.al_double.size();
+			}
+			if (this.type.equals("String"))
+			{
+				out = this.al_string.size();
+			}
+			if (this.type.equals("Integer"))
+			{
+				out = this.al_int.size();
+			}
+			return out;
+		}
+
 		// add as string
 		public void addParse(String s2add)
 		{
