@@ -552,6 +552,18 @@ public class Jdf{
 			}
 		}
 
+		public Series(String[] stringv)
+		{
+			this.numel = stringv.length;
+			this.type = "String";
+			this.al_string = new ArrayList<String>();
+			int i;
+			for (i = 0; i < this.numel; i++)
+			{
+				this.al_string.add(stringv[i]);
+			}
+		}
+
 		// Get length
 		public int getLength()
 		{
@@ -835,6 +847,21 @@ public class Jdf{
 			for (i = 0; i < n; i++)
 			{
 				out[i] = ind_al.get(i);
+			}
+			return out;
+		}
+
+		public boolean hasString(String cval)
+		{
+			boolean out;
+			int[] ni = this.indWhereString(cval);
+			if (ni.length > 0)
+			{
+				out = true;
+			}
+			else
+			{
+				out = false;
 			}
 			return out;
 		}
