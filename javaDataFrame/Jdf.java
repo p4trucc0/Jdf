@@ -59,6 +59,44 @@ public class Jdf{
 		return;
 	}
 
+	// Checks whether the current jdf has a column with expected name
+	public boolean hasColByName(String cname)
+	{
+		int i;
+		boolean hasit = false;
+		for (i = 0; i < this.ColumnNames.size(); i++)
+		{
+			if (this.ColumnNames.get(i).equals(cname))
+			{
+				hasit = true;
+				break;
+			}
+		}
+		return hasit;
+	}
+
+	public boolean hasColByNameAndType(String cname, String ctype)
+	{
+		boolean hasit = false;
+		boolean correct_type = false;
+		boolean out;
+		hasit = this.hasColByName(cname);
+		if (hasit)
+		{
+			Series ts = this.getColByName(cname);
+			if (ts.type.equals(ctype))
+			{
+				correct_type = true;
+			}
+			else
+			{
+				correct_type = false;
+			}
+		}
+		out = hasit && correct_type;
+		return out;
+	}
+
 	public Series getColByName(String cname)
 	{
 		int i;

@@ -19,6 +19,49 @@ public class JdfStats
 		// do nothing.
 	}
 
+	// JDF functions, returning single value.
+	public double meanJdfCol(Jdf jin, String cname)
+	{
+		double out = 0.0;
+		boolean c_check = jin.hasColByNameAndType(cname, "Double");
+		if (c_check)
+			out = this.meanDouble(jin.getColByName(cname));
+		return out;
+	}
+
+	public double stdJdfCol(Jdf jin, String cname)
+	{
+		double out = 0.0;
+		boolean c_check = jin.hasColByNameAndType(cname, "Double");
+		if (c_check)
+			out = this.stdDouble(jin.getColByName(cname));
+		return out;
+	}
+
+	public double varJdfCol(Jdf jin, String cname)
+	{
+		double out = 0.0;
+		boolean c_check = jin.hasColByNameAndType(cname, "Double");
+		if (c_check)
+			out = this.varDouble(jin.getColByName(cname));
+		return out;
+	}
+
+	public double corrJdfCols(Jdf jin, String cn1, String cn2)
+	{
+		double out = 0.0;
+		boolean cc1, cc2;
+		cc1 = jin.hasColByNameAndType(cn1, "Double");
+		cc2 = jin.hasColByNameAndType(cn2, "Double");
+		if (cc1 && cc2)
+		{
+			out = this.corrDouble(jin.getColByName(cn1), jin.getColByName(cn2));
+		}
+		return out;
+	}
+	
+
+	// SERIES FUNCTIONS
 	// Calculates mean of a double series
 	public double meanDouble(Jdf.Series s_in)
 	{
@@ -100,7 +143,7 @@ public class JdfStats
 	public double corrDouble(Jdf.Series se1, Jdf.Series se2)
 	{
 		double out = 0.0;
-		out = this.covDouble(se1, se2) / (this.stdDouble(se1) * this.stdDouble(se2));
+		out = this.covDouble(se1, se2) / (this.stdDouble(se1) * this.stdDouble(se2));	
 		return out;
 	}
 
