@@ -68,4 +68,40 @@ public class JdfStats
 		return out;
 	}
 
+	// Covariance between two series (double precision values)
+	public double covDouble(Jdf.Series se1, Jdf.Series se2)
+	{
+		double out = 0.0;
+		int i;
+		int n1 = se1.getLength();
+		int n2 = se2.getLength();
+		double m1, m2;
+		double n;
+		double s1 = 0.0;
+		if (n1 == n2)
+		{
+			n = (double)(n1);
+			m1 = this.meanDouble(se1);
+			m2 = this.meanDouble(se2);
+			for (i = 0; i < n1; i++)
+			{
+				s1 += ((se1.getDouble(i) - m1) * (se2.getDouble(i) - m2));
+			}
+			out = s1 / n;
+		}
+		else
+		{
+			out = 0.0; // not possible to evaluate cov.
+		}
+		return out;
+	}
+
+	// Correlation between two series.
+	public double corrDouble(Jdf.Series se1, Jdf.Series se2)
+	{
+		double out = 0.0;
+		out = this.covDouble(se1, se2) / (this.stdDouble(se1) * this.stdDouble(se2));
+		return out;
+	}
+
 }
