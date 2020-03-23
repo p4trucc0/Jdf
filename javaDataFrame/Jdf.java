@@ -23,6 +23,20 @@ public class Jdf{
 		Columns = new ArrayList<Series>();
 	}
 
+	// Return identical object
+	public Jdf copy()
+	{
+		Jdf out = new Jdf();
+		int ncol = this.ColumnNames.size();
+		int i;
+		out.rows = this.rows;
+		for (i = 0; i < ncol; i++)
+		{
+			out.addColumn(this.ColumnNames.get(i), this.Columns.get(i).copy());
+		}
+		return out;
+	}
+
 	// add a new column.
 	public void addEmptyColumn(String cname, String ctype)
 	{
@@ -562,6 +576,32 @@ public class Jdf{
 			{
 				this.al_string.add(stringv[i]);
 			}
+		}
+
+		// returns an identical object to current.
+		public Series copy()
+		{
+			Series out = new Series(this.type);
+			int i;
+			int n = this.getLength();
+			switch (this.type)
+			{
+				case "Double":
+					for (i = 0; i < n; i++)
+						out.addDouble(this.getDouble(i));
+					break;
+				case "String":
+					for (i = 0; i < n; i++)
+						out.addString(this.getString(i));
+					break;
+				case "Integer":
+					for (i = 0; i < n; i++)
+						out.addInteger(this.getInteger(i));
+					break;
+				default:
+					break;
+			}
+			return out;
 		}
 
 		// Get length
