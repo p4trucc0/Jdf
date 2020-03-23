@@ -157,6 +157,13 @@ public class Jdf{
 		return;
 	}
 
+	public void csumColumn(String dst_name, String src_name)
+	{
+		Series s1 = this.getColByName(src_name).csum();
+		this.addColumn(dst_name, s1);
+		return;
+	}
+
 	public void sortOnColumn(String cname, boolean ascending)
 	{
 		int[] sort_ind = getColByName(cname).sort(ascending);
@@ -1189,6 +1196,28 @@ public class Jdf{
 					{
 						out.setDouble(i, this.getDouble(i) - this.getDouble(i - 1));
 					}
+				}
+			}
+			else
+			{
+				out = new Series("Double", this.numel);
+			}
+			return out;
+		}
+
+		// cumulative sum
+		public Series csum()
+		{
+			Series out;
+			int i;
+			double prv = 0.0;
+			if (this.type == "Double")
+			{
+				out = new Series("Double", this.numel);
+				for (i = 0; i < this.numel; i++)
+				{
+					prv += this.getDouble(i);
+					out.setDouble(i, prv);
 				}
 			}
 			else

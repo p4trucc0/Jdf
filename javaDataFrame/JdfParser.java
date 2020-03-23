@@ -49,6 +49,8 @@ public class JdfParser{
 		}
 		String[] key_split;
 		String col_name;
+		String dst_col_name;
+		String src_col_name;
 		String math_expr;
 		String[] math_expr_split;
 		switch (keyword)
@@ -134,7 +136,7 @@ public class JdfParser{
 						else
 						{
 							// TODO: Simplify this and recycle code for "mc" command!
-							String src_col_name = math_expr_split[0];
+							src_col_name = math_expr_split[0];
 							String sec_operand = math_expr_split[1];
 							valid_col_name = this.jdf.hasColByNameAndType(src_col_name, "Double");
 							if (!valid_col_name) // ok
@@ -291,6 +293,51 @@ public class JdfParser{
 						}
 					}
 				}
+			// diff: differentiate on column
+			case "diff":
+				this.out_str = this.out_str.concat("========== DIFF OPERATION ==========\n");
+				key_split = this.keyarg.split(";");
+				if (key_split.length < 2)
+				{
+					this.out_str = this.out_str.concat("ERROR: wrong number of arguments.\n");
+					this.err_level = 1;
+					this.err_code = 2; // wrong number of args.
+					return;
+				} 
+				else
+				{
+					dst_col_name = key_split[0];
+					src_col_name = key_split[1];
+					this.out_str = this.out_str.concat("Defining new column ").concat(dst_col_name).concat(" as diff of column ").concat(src_col_name).concat(".\n");
+					//boolean valid_col_name = ((!this.jdf.hasColByName(dst_col_name)) && (this.jdf.hasColByNameAndType(src_col1_name, "Double")));
+					boolean valid_dst_col_name = !this.jdf.hasColByName(dst_col_name);
+					if (!valid_dst_col_name) 
+					{
+						this.out_str = this.out_str.concat("ERROR: Invalid target column name (Already taken!).\n");
+						this.err_level = 1;
+						this.err_code = 6; // invalid column name - already taken.
+						return;
+					}
+					else
+					{
+						boolean valid_src_col_name = this.jdf.hasColByNameAndType(src_col_name, "Double");
+						if (!valid_src_col_name) 
+						{
+							this.out_str = this.out_str.concat("ERROR: Invalid source column name (non-existent or invalid type).\n");
+							this.err_level = 1;
+							this.err_code = 3; // invalid column name
+							return;
+						}
+						else
+						{
+							this.jdf.diffColumn(dst_col_name, src_col_name);
+							this.out_str = this.out_str.concat("DONE.\n");
+							this.err_level = 0;
+							this.err_code = 0;
+							return;
+						}
+					}
+				}
 			default:
 				break;
 		}
@@ -318,6 +365,7 @@ public class JdfParser{
 		this.cmd_dict.addString("f");
 		this.cmd_dict.addString("ms");
 		this.cmd_dict.addString("mc");
+		this.cmd_dict.addString("diff");
 	}
 
 }
