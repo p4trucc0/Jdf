@@ -25,6 +25,7 @@ public class JdfParser{
 	public String keyword = "";
 	public String keyarg = "";
 	public int cmdlen = 0;
+	public double double_output = 0.0; // for stat calculations
 	// List of possible key-words.
 	public Jdf.Series cmd_dict = new Jdf.Series("String");
 
@@ -293,6 +294,7 @@ public class JdfParser{
 						}
 					}
 				}
+			// TODO: This, csum and drat should become the same function with different arguments.
 			// diff: differentiate on column
 			case "diff":
 				this.out_str = this.out_str.concat("========== DIFF OPERATION ==========\n");
@@ -338,6 +340,51 @@ public class JdfParser{
 						}
 					}
 				}
+			// csum: cumulated sum.
+			case "csum":
+				this.out_str = this.out_str.concat("========== CUMSUM OPERATION ==========\n");
+				key_split = this.keyarg.split(";");
+				if (key_split.length < 2)
+				{
+					this.out_str = this.out_str.concat("ERROR: wrong number of arguments.\n");
+					this.err_level = 1;
+					this.err_code = 2; // wrong number of args.
+					return;
+				} 
+				else
+				{
+					dst_col_name = key_split[0];
+					src_col_name = key_split[1];
+					this.out_str = this.out_str.concat("Defining new column ").concat(dst_col_name).concat(" as cumulated sum of column ").concat(src_col_name).concat(".\n");
+					//boolean valid_col_name = ((!this.jdf.hasColByName(dst_col_name)) && (this.jdf.hasColByNameAndType(src_col1_name, "Double")));
+					boolean valid_dst_col_name = !this.jdf.hasColByName(dst_col_name);
+					if (!valid_dst_col_name) 
+					{
+						this.out_str = this.out_str.concat("ERROR: Invalid target column name (Already taken!).\n");
+						this.err_level = 1;
+						this.err_code = 6; // invalid column name - already taken.
+						return;
+					}
+					else
+					{
+						boolean valid_src_col_name = this.jdf.hasColByNameAndType(src_col_name, "Double");
+						if (!valid_src_col_name) 
+						{
+							this.out_str = this.out_str.concat("ERROR: Invalid source column name (non-existent or invalid type).\n");
+							this.err_level = 1;
+							this.err_code = 3; // invalid column name
+							return;
+						}
+						else
+						{
+							this.jdf.csumColumn(dst_col_name, src_col_name);
+							this.out_str = this.out_str.concat("DONE.\n");
+							this.err_level = 0;
+							this.err_code = 0;
+							return;
+						}
+					}
+				}
 			default:
 				break;
 		}
@@ -366,6 +413,7 @@ public class JdfParser{
 		this.cmd_dict.addString("ms");
 		this.cmd_dict.addString("mc");
 		this.cmd_dict.addString("diff");
+		this.cmd_dict.addString("csum");
 	}
 
 }
