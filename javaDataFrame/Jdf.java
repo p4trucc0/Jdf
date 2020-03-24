@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.lang.Math;
 import java.io.PrintStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -370,6 +372,58 @@ public class Jdf{
 			out = out.concat("\n");
 		}
 		return out;
+	}
+
+	// raw csv string representation (for exporting)
+	// TODO: Parametrize sepator.
+	public String csvString()
+	{
+		int i_c; // cols
+		int i_r; // rows
+		int n_c = this.ColumnNames.size();
+		String prv = "";
+		String out = "";
+		for (i_c = 0; i_c < n_c; i_c++)
+		{
+			prv = this.ColumnNames.get(i_c);
+			if (i_c < n_c - 1)
+			{
+				out = out.concat(prv.concat(","));
+			}
+			else
+			{
+				out = out.concat(prv);
+			}
+		}
+		out = out.concat("\n");
+		// down to rows.
+		for (i_r = 0; i_r < this.rows; i_r++)
+		{
+			for (i_c = 0; i_c < n_c; i_c++)
+			{
+				prv = this.Columns.get(i_c).retrieveParse(i_r, 0, false);
+				if (i_c < n_c - 1)
+				{
+					out = out.concat(prv.concat(","));
+				}
+				else
+				{
+					out = out.concat(prv);
+				}
+			}
+			out = out.concat("\n");
+		}
+		return out;
+	}
+
+	// Write on csv.
+	public void writeCsv(String csv_filename) throws IOException
+	{
+		String scsv = this.csvString();
+		BufferedWriter bwrt = new BufferedWriter(new FileWriter(csv_filename, false));
+		bwrt.append(scsv);
+		bwrt.close();
+		return;
 	}
 
 	// read a csv file and fill the current dataframe on the go
