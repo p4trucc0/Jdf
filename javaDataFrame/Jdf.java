@@ -341,7 +341,8 @@ public class Jdf{
 		int i_r; // rows
 		int n_c = this.ColumnNames.size();
 		String prv = "";
-		String out = "";
+		String out = "   I"; // index.
+		String pri = "";
 		for (i_c = 0; i_c < n_c; i_c++)
 		{
 			prv = this.ColumnNames.get(i_c);
@@ -355,6 +356,12 @@ public class Jdf{
 		// down to rows.
 		for (i_r = 0; i_r < this.rows; i_r++)
 		{
+			pri = new Integer(i_r).toString();
+			while (pri.length() < 4)
+			{
+				pri = " ".concat(pri);
+			}
+			out = out.concat(pri);
 			for (i_c = 0; i_c < n_c; i_c++)
 			{
 				prv = this.Columns.get(i_c).retrieveParse(i_r, c_width, true);
