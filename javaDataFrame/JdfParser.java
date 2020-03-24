@@ -54,6 +54,7 @@ public class JdfParser{
 		String src_col_name;
 		String math_expr;
 		String[] math_expr_split;
+		boolean valid_col_name;
 		switch (keyword)
 		{
 			// f: FILTERING
@@ -74,7 +75,7 @@ public class JdfParser{
 					col_name = key_split[0];
 					String col_val = key_split[1];
 					this.out_str = this.out_str.concat("Filtering where column ").concat(col_name).concat(" is equal to ").concat(col_val).concat(".\n");
-					boolean valid_col_name = this.jdf.hasColByNameAndType(col_name, "String");
+					valid_col_name = this.jdf.hasColByNameAndType(col_name, "String");
 					if (!valid_col_name)
 					{
 						this.out_str = this.out_str.concat("ERROR: Invalid column name.\n");
@@ -117,7 +118,7 @@ public class JdfParser{
 					col_name = key_split[0];
 					math_expr = key_split[1];
 					math_expr_split = math_expr.split("\\+|/|\\*|\\^|\\-");
-					boolean valid_col_name = !this.jdf.hasColByName(col_name); // Check if column already there.
+					valid_col_name = !this.jdf.hasColByName(col_name); // Check if column already there.
 					if (!valid_col_name) //ok.
 					{
 						this.out_str = this.out_str.concat("ERROR: Invalid target column name (Already taken!).\n");
@@ -215,7 +216,7 @@ public class JdfParser{
 					col_name = key_split[0];
 					math_expr = key_split[1];
 					math_expr_split = math_expr.split("\\+|/|\\*|\\^|\\-");
-					boolean valid_col_name = !this.jdf.hasColByName(col_name); // Check if column already there.
+					valid_col_name = !this.jdf.hasColByName(col_name); // Check if column already there.
 					if (!valid_col_name)
 					{
 						this.out_str = this.out_str.concat("ERROR: Invalid target column name (Already taken!).\n");
@@ -385,6 +386,109 @@ public class JdfParser{
 						}
 					}
 				}
+			// STAT: Calcoli statistici
+			case "stat":
+				this.out_str = this.out_str.concat("========== STATISTIC CALCULATION ==========\n");
+				JdfStats js = new JdfStats(); // create statistical calc object.
+				key_split = this.keyarg.split("\\-");
+				if (key_split.length < 2)
+				{
+					this.out_str = this.out_str.concat("ERROR: wrong number of arguments.\n");
+					this.err_level = 1;
+					this.err_code = 2; // wrong number of args.
+					return;
+				}
+				else
+				{
+					String statfcn = key_split[0];
+					String statarg = key_split[1];
+					switch (statfcn)
+					{
+						case "mean":
+							col_name = statarg;
+							this.out_str = this.out_str.concat("Calculating mean of column ").concat(col_name).concat(".\n");
+							valid_col_name = this.jdf.hasColByNameAndType(col_name, "Double");
+							if (!valid_col_name)
+							{
+								this.out_str = this.out_str.concat("ERROR: Invalid source column name (non-existent or invalid type).\n");
+								this.err_level = 1;
+								this.err_code = 3; // invalid column name
+								return;
+							}
+							else
+							{
+								this.double_output = js.meanJdfCol(this.jdf, col_name); 
+								this.err_level = 0;
+								this.err_code = 0;
+							}
+							break;
+						case "std":
+							col_name = statarg;
+							this.out_str = this.out_str.concat("Calculating standard deviation of column ").concat(col_name).concat(".\n");
+							valid_col_name = this.jdf.hasColByNameAndType(col_name, "Double");
+							if (!valid_col_name)
+							{
+								this.out_str = this.out_str.concat("ERROR: Invalid source column name (non-existent or invalid type).\n");
+								this.err_level = 1;
+								this.err_code = 3; // invalid column name
+								return;
+							}
+							else
+							{
+								this.double_output = js.stdJdfCol(this.jdf, col_name); 
+								this.err_level = 0;
+								this.err_code = 0;
+							}
+							break;
+						case "var":
+							col_name = statarg;
+							this.out_str = this.out_str.concat("Calculating variance of column ").concat(col_name).concat(".\n");
+							valid_col_name = this.jdf.hasColByNameAndType(col_name, "Double");
+							if (!valid_col_name)
+							{
+								this.out_str = this.out_str.concat("ERROR: Invalid source column name (non-existent or invalid type).\n");
+								this.err_level = 1;
+								this.err_code = 3; // invalid column name
+								return;
+							}
+							else
+							{
+								this.double_output = js.varJdfCol(this.jdf, col_name); 
+								this.err_level = 0;
+								this.err_code = 0;
+							}
+							break;
+						case "corr":
+							String[] statargsplit = statarg.split(";");
+							String col1_name = statargsplit[0];
+							String col2_name = statargsplit[1];
+							this.out_str = this.out_str.concat("Calculating correlation between ").concat(col1_name).concat(" and ").concat(col2_name).concat(".\n");
+							valid_col_name = ((this.jdf.hasColByNameAndType(col1_name, "Double")) && (this.jdf.hasColByNameAndType(col2_name, "Double")));
+							if (!valid_col_name)
+							{
+								this.out_str = this.out_str.concat("ERROR: At least one of the specified columns does not exist.\n");
+								this.err_level = 1;
+								this.err_code = 3; // invalid column name
+								return;
+							}
+							else
+							{
+								this.double_output = js.corrJdfCols(this.jdf, col1_name, col2_name); 
+								this.err_level = 0;
+								this.err_code = 0;
+							}
+							break;
+						default:
+							this.out_str = this.out_str.concat("ERROR: Invalid/unrecognized statistical function.\n");
+							this.err_level = 1;
+							this.err_code = 8; // invalid stat function
+							return;
+
+					}
+					this.out_str = this.out_str.concat("Result = ").concat(new Double(this.double_output).toString()).concat(".\n");
+					this.out_str = this.out_str.concat("DONE.\n");
+					return;
+				}
 			default:
 				break;
 		}
@@ -414,6 +518,7 @@ public class JdfParser{
 		this.cmd_dict.addString("mc");
 		this.cmd_dict.addString("diff");
 		this.cmd_dict.addString("csum");
+		this.cmd_dict.addString("stat");
 	}
 
 }
