@@ -489,6 +489,85 @@ public class JdfParser{
 					this.out_str = this.out_str.concat("DONE.\n");
 					return;
 				}
+				// Load from url or from csv
+				case "load":
+					this.out_str = this.out_str.concat("========== DATA LOAD ==========\n");
+					key_split = this.keyarg.split(" ", 2);
+					String data_src  = key_split[0];
+					String data_name = key_split[1];
+					switch (data_src)
+					{
+						case "url":
+							this.out_str = this.out_str.concat("Loading data from URL: ").concat(data_name).concat(".\n");
+							try
+							{
+								this.jdf.fillFromUrl(data_name);
+								this.out_str = this.out_str.concat("DONE.\n");
+								this.err_level = 0;
+								this.err_code = 0;
+								return;
+							}
+							catch (IOException e)
+							{
+								this.out_str = this.out_str.concat("ERROR: Invalid URL.\n");
+								this.err_level = 2; // internal java error.
+								this.err_code = 9; // invalid url.
+								return;
+							}
+						case "csv":
+							this.out_str = this.out_str.concat("Loading data from CSV: ").concat(data_name).concat(".\n");
+							try
+							{
+								this.jdf.fillFromCsv(data_name);
+								this.out_str = this.out_str.concat("DONE.\n");
+								this.err_level = 0;
+								this.err_code = 0;
+								return;
+							}
+							catch (IOException e)
+							{
+								this.out_str = this.out_str.concat("ERROR: Invalid file name.\n");
+								this.err_level = 2; // internal java error.
+								this.err_code = 10; // invalid fname.
+								return;
+							}
+						default:
+							this.out_str = this.out_str.concat("ERROR: Invalid data source key-word.\n");
+							this.err_level = 1; // jdf error.
+							this.err_code = 11; // invalid data source option.
+							return;
+					}
+				// Save to csv (or other format in a far future.)
+				case "save":
+					this.out_str = this.out_str.concat("========== DATA SAVE ==========\n");
+					key_split = this.keyarg.split(" ", 2);
+					data_src  = key_split[0];
+					data_name = key_split[1];
+					switch (data_src)
+					{
+						case "csv":
+							this.out_str = this.out_str.concat("Saving current data to CSV: ").concat(data_name).concat(".\n");
+							try
+							{
+								this.jdf.writeCsv(data_name);
+								this.out_str = this.out_str.concat("DONE.\n");
+								this.err_level = 0;
+								this.err_code = 0;
+								return;
+							}
+							catch (IOException e)
+							{
+								this.out_str = this.out_str.concat("ERROR: Internal java I/O error.\n");
+								this.err_level = 2; // internal java error.
+								this.err_code = 10; // invalid fname.
+								return;
+							}
+						default:
+							this.out_str = this.out_str.concat("ERROR: Invalid output file format.\n");
+							this.err_level = 1; // jdf error.
+							this.err_code = 12; // invalid output file format.
+							return;
+					}
 			default:
 				break;
 		}
@@ -519,6 +598,8 @@ public class JdfParser{
 		this.cmd_dict.addString("diff");
 		this.cmd_dict.addString("csum");
 		this.cmd_dict.addString("stat");
+		this.cmd_dict.addString("load");
+		this.cmd_dict.addString("save");
 	}
 
 }
