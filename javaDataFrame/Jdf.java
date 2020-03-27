@@ -450,6 +450,7 @@ public class Jdf{
 		int seplen;
 		int i;
 		int prvInt;
+		int n_col;
 		double prvDouble;
 		String currentType = "";
 		do
@@ -466,29 +467,57 @@ public class Jdf{
 			{
 				lsep = linea.split(",");
 				seplen = lsep.length;
-				for (i = 0; i < seplen; i++)
+				if (lines_read == 0)
 				{
-					elem = lsep[i].trim(); // remove whitespace
+					n_col = seplen;
+				}
+				else
+				{
+					n_col = this.ColumnNames.size();
+				}
+				for (i = 0; i < n_col; i++)
+				{
+					if (i < seplen)
+					{
+						elem = lsep[i].trim(); // remove whitespace
+					}
+					else
+					{
+						elem = "";
+					}
+					//System.out.printf("%s\n", elem);
 					if (lines_read == 0) // header
 					{
 						this.ColumnNames.add(elem);
 					}
 					else
 					{
-						if (lines_read == 1) // first row, detect type
+						if (elem.length() > 0)
 						{
-							currentType = "Double";
-							try
+							if (lines_read == 1) // first row, detect type
 							{
-								prvDouble = Double.parseDouble(elem);
+								currentType = "Double";
+								try
+								{
+									prvDouble = Double.parseDouble(elem);
+								}
+								catch (NumberFormatException nfe)
+								{
+									currentType = "String";
+								}
+								Columns.add(new Series(currentType));
 							}
-							catch (NumberFormatException nfe)
+							Columns.get(i).addParse(elem);
+						}
+						else
+						{
+							if (lines_read == 1)
 							{
 								currentType = "String";
+								Columns.add(new Series(currentType));
 							}
-							Columns.add(new Series(currentType));
+							Columns.get(i).addParse(elem);
 						}
-						Columns.get(i).addParse(elem);
 					}
 					//System.out.printf("%s\t", elem);
 				}
@@ -525,9 +554,9 @@ public class Jdf{
 			for (i = 0; i < this.rows; i++)
 			{
 				prv_str = this.Columns.get(i_d).retrieveParse(i, 0, false);
-				d_year = Integer.parseInt(prv_str.split(" ")[0].split("-")[0]);
-				d_month = Integer.parseInt(prv_str.split(" ")[0].split("-")[1]);
-				d_day = Integer.parseInt(prv_str.split(" ")[0].split("-")[2]);
+				d_year = Integer.parseInt(prv_str.split(" ")[0].split("T|-")[0]);
+				d_month = Integer.parseInt(prv_str.split(" ")[0].split("T|-")[1]);
+				d_day = Integer.parseInt(prv_str.split(" ")[0].split("T|-")[2]);
 				days = (366*(d_year - 2020));
 				switch (d_month)
 				{
