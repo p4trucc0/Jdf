@@ -417,6 +417,13 @@ public class Jdf{
 		return out;
 	}
 
+	public void resetContent()
+	{
+		rows = 0;
+		ColumnNames = new ArrayList<String>();
+		Columns = new ArrayList<Series>();
+	}
+
 	// Write on csv.
 	public void writeCsv(String csv_filename) throws IOException
 	{
@@ -430,6 +437,7 @@ public class Jdf{
 	// read a csv file and fill the current dataframe on the go
 	public void fillFromCsv(String csv_filename) throws IOException
 	{
+		this.resetContent();
 		BufferedReader inb = new BufferedReader(new FileReader(csv_filename));
 		this.fillFromBufferReader(inb);
 	}
@@ -437,6 +445,7 @@ public class Jdf{
 	// read csv file from url
 	public void fillFromUrl(String url_str) throws IOException
 	{
+		this.resetContent();
 		URL url = new URL(url_str);
 		BufferedReader inb = new BufferedReader(new InputStreamReader(url.openStream()));
 		this.fillFromBufferReader(inb);
@@ -444,6 +453,7 @@ public class Jdf{
 
 	public void fillFromString(String in_str) throws IOException
 	{
+		this.resetContent();
 		BufferedReader inb = new BufferedReader(new StringReader(in_str));
 		this.fillFromBufferReader(inb);
 	}
