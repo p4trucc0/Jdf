@@ -568,6 +568,17 @@ public class JdfParser{
 							this.err_code = 12; // invalid output file format.
 							return;
 					}
+				// print "pretty string" - NO typical output; special case.
+				case "print":
+					int pslen = 25;
+					if (this.cmdlen > 1)
+					{
+						pslen = Integer.parseInt(this.keyarg); // customizable length
+					}
+					this.out_str = this.jdf.prettyString(pslen);
+					this.err_code = 0;
+					this.err_level = 0;
+					return;
 			default:
 				break;
 		}
@@ -600,6 +611,8 @@ public class JdfParser{
 		this.cmd_dict.addString("stat");
 		this.cmd_dict.addString("load");
 		this.cmd_dict.addString("save");
+		// special case!
+		this.cmd_dict.addString("print");
 	}
 
 }

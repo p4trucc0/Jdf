@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.StringReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -438,6 +439,12 @@ public class Jdf{
 	{
 		URL url = new URL(url_str);
 		BufferedReader inb = new BufferedReader(new InputStreamReader(url.openStream()));
+		this.fillFromBufferReader(inb);
+	}
+
+	public void fillFromString(String in_str) throws IOException
+	{
+		BufferedReader inb = new BufferedReader(new StringReader(in_str));
 		this.fillFromBufferReader(inb);
 	}
 
