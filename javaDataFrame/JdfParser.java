@@ -167,6 +167,46 @@ public class JdfParser{
 				this.err_level = 0;
 				this.err_code = 0;
 				return;
+			// fillna: replace values with specified amount
+			case "fillna":
+				this.out_str = this.out_str.concat("========== REPLACE NAN VALUES ==========\n");
+				String[] ka_split = this.keyarg.split(";");
+				if (ka_split.length != 2)
+				{
+					this.out_str = this.out_str.concat("ERROR: wrong number of arguments.\n");
+					this.err_level = 1;
+					this.err_code = 2; // wrong number of args.
+					return;
+				}
+				else
+				{
+					col_name = ka_split[0];
+					String val2repl = ka_split[1];
+					this.out_str = this.out_str.concat("Replacing NaNs in column ").concat(col_name).concat(" with value ").concat(val2repl);
+					if (!this.jdf.hasColByNameAndType(col_name, "Double"))
+					{
+						this.out_str = this.out_str.concat("ERROR: Invalid column name.\n");
+						this.err_level = 1;
+						this.err_code = 3; // invalid column name
+						return;
+					}
+					else
+					{
+						double v2r;
+						try
+						{
+							v2r = Double.parseDouble(val2repl);
+						} catch (NumberFormatException e)
+						{
+							v2r = 0.0;
+						}
+						this.jdf.replaceNaN(col_name, v2r);
+						this.out_str = this.out_str.concat("DONE.\n");
+						this.err_level = 0;
+						this.err_code = 0;
+						return;
+					}
+				}
 			case "ms":
 				this.out_str = this.out_str.concat("========== MATH OP. WITH SCALAR ==========\n");
 				key_split = this.keyarg.split("=");
@@ -670,6 +710,7 @@ public class JdfParser{
 		this.cmd_dict.addString("f");          // filter by string value
 		this.cmd_dict.addString("fr");         // filter rows
 		this.cmd_dict.addString("rmc");	       // remove column by name
+		this.cmd_dict.addString("fillna");     // replace NaN values with arbitrary values.
 		this.cmd_dict.addString("ms");
 		this.cmd_dict.addString("mc");
 		this.cmd_dict.addString("diff");
