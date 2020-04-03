@@ -649,6 +649,15 @@ public class Jdf{
 		return;
 	}
 
+	public void replaceNaN(String cname, double v2r)
+	{
+		if (this.hasColByNameAndType(cname, "Double"))
+		{
+			this.getColByName(cname).replaceNanDouble(v2r);
+		}
+		return;
+	}
+
 	// create an empty series.
 	public Series emptySeries(String ntype)
 	{
@@ -1546,6 +1555,24 @@ public class Jdf{
 			}
 		}
 
+		// replaces NaN with other value...
+		public void replaceNanDouble(double v2r)
+		{
+			int i;
+			if (this.type == "Double")
+				{
+				for (i = 0; i < this.numel; i++)
+				{
+					if (Double.isNaN(this.al_double.get(i)))
+					{
+						this.al_double.set(i, v2r);
+					}
+				}
+			}
+			return;
+		}
+
 	}
+
 
 }
