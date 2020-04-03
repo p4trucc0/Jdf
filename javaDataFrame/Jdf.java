@@ -756,6 +756,27 @@ public class Jdf{
 			return;
 		}
 
+		public void setParse(int ind, String s2set)
+		{
+			if (ind >= this.numel)
+			{
+				return; // error.
+			}
+			if (this.type.equals("Double"))
+			{
+				this.al_double.set(ind, Double.parseDouble(s2set));
+			}
+			if (this.type.equals("Integer"))
+			{
+				this.al_int.set(ind, Integer.parseInt(s2set));
+			}
+			if (this.type.equals("String"))
+			{
+				this.al_string.set(ind, s2set);
+			}
+			return;
+		}
+
 		// Gets element from specified position and returns it as string (no decimals)
 		public String retrieveParse(int ind, int out_len, boolean double_as_int) // out_len: length of the output string.
 		{
