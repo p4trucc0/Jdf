@@ -76,6 +76,32 @@ public class Jdf{
 		return;
 	}
 
+	// get a single element from a column.
+	public String getParse(String cname, int ind)
+	{
+		if (!this.hasColByName(cname))
+		{
+			return "";
+		}
+		else
+		{
+			return this.getColByName(cname).getParse(ind);
+		}
+	}
+
+	public void setParse(String cname, int ind, String s2add)
+	{
+		if (!this.hasColByName(cname))
+		{
+			return;
+		}
+		else
+		{
+			this.getColByName(cname).setParse(ind, s2add);
+			return;
+		}
+	}
+
 	// Checks whether the current jdf has a column with expected name
 	public boolean hasColByName(String cname)
 	{
@@ -788,7 +814,7 @@ public class Jdf{
 			String out = "";
 			if (ind >= this.numel)
 			{
-				out = "OOB";
+				out = "";
 			}
 			else
 			{
