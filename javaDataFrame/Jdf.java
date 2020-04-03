@@ -49,6 +49,7 @@ public class Jdf{
 		return;
 	}
 
+
 	// TODO: Check if the current name is already in names.
 	public void addColumn(String cname, Series nse)
 	{
@@ -189,6 +190,20 @@ public class Jdf{
 	public void csumColumn(String dst_name, String src_name)
 	{
 		Series s1 = this.getColByName(src_name).csum();
+		this.addColumn(dst_name, s1);
+		return;
+	}
+
+	public void dratColumn(String dst_name, String src_name)
+	{
+		Series s1 = this.getColByName(src_name).drat();
+		this.addColumn(dst_name, s1);
+		return;
+	}
+
+	public void cmltColumn(String dst_name, String src_name)
+	{
+		Series s1 = this.getColByName(src_name).cmlt();
 		this.addColumn(dst_name, s1);
 		return;
 	}
@@ -1345,8 +1360,33 @@ public class Jdf{
 			return out;
 		}
 
-		// element-by-element differential.
-		// TODO: do the same for Integers
+		// element-by-element ratio
+		public Series drat()
+		{
+			Series out;
+			int i;
+			if (this.type == "Double")
+			{
+				out = new Series("Double", this.numel);
+				for (i = 0; i < this.numel; i++)
+				{
+					if (i == 0)
+					{
+						out.setDouble(0, 1.0);
+					}
+					else
+					{
+						out.setDouble(i, this.getDouble(i)/this.getDouble(i - 1));
+					}
+				}
+			}
+			else
+			{
+				out = new Series("Double", this.numel);
+			}
+			return out;
+		}
+
 		public Series diff()
 		{
 			Series out;
@@ -1385,6 +1425,28 @@ public class Jdf{
 				for (i = 0; i < this.numel; i++)
 				{
 					prv += this.getDouble(i);
+					out.setDouble(i, prv);
+				}
+			}
+			else
+			{
+				out = new Series("Double", this.numel);
+			}
+			return out;
+		}
+
+		// cumulative multiplication
+		public Series cmlt()
+		{
+			Series out;
+			int i;
+			double prv = 1.0;
+			if (this.type == "Double")
+			{
+				out = new Series("Double", this.numel);
+				for (i = 0; i < this.numel; i++)
+				{
+					prv *= this.getDouble(i);
 					out.setDouble(i, prv);
 				}
 			}

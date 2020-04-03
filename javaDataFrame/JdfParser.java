@@ -103,6 +103,53 @@ public class JdfParser{
 						}
 					}
 				}
+			// fr: filter by row (initial, final.)
+			case "fr":
+				this.out_str = this.out_str.concat("========== RAW FILTERING OPERATION ==========\n");
+				key_split = this.keyarg.split(";");
+				if (key_split.length < 2)
+				{
+					this.out_str = this.out_str.concat("ERROR: wrong number of arguments.\n");
+					this.err_level = 1;
+					this.err_code = 2; // wrong number of args.
+					return;
+				} 
+				else
+				{
+					// TODO: Error checking for Integer parsing
+					int i_int, n_int;
+					String r0s = key_split[0];
+					String r1s = key_split[1];
+					int r0i = Integer.parseInt(r0s);
+					int r1i = Integer.parseInt(r1s);
+					this.out_str = this.out_str.concat("Cutting tables for rows >=").concat(new Integer(r0i).toString());
+					this.out_str = this.out_str.concat(" and <").concat(new Integer(r1i).toString()).concat(".\n");
+					if (r1i <= r0i)
+					{
+						this.out_str = this.out_str.concat("ERROR: Empty interval selected.\n");
+						this.err_level = 1;
+						this.err_code = 12; // Empty interval
+						return;
+					}
+					if (r1i >= this.jdf.rows)
+					{
+						this.out_str = this.out_str.concat("ERROR: End index is out of bounds.\n");
+						this.err_level = 1;
+						this.err_code = 13; // End index out of bounds.
+						return;
+					}
+					n_int = r1i - r0i;
+					int[] arr_ind = new int[n_int];
+					for (i_int = 0; i_int < n_int; i_int++)
+					{
+						arr_ind[i_int] = r0i + i_int;
+					}
+					this.jdf.selfCutOnIndex(arr_ind);
+					this.out_str = this.out_str.concat("DONE.\n");
+					this.err_level = 0;
+					this.err_code = 0;
+					return;
+				}
 			case "ms":
 				this.out_str = this.out_str.concat("========== MATH OP. WITH SCALAR ==========\n");
 				key_split = this.keyarg.split("=");
@@ -603,7 +650,8 @@ public class JdfParser{
 
 	public void initKeyDict()
 	{
-		this.cmd_dict.addString("f");
+		this.cmd_dict.addString("f");          // filter by string value
+		this.cmd_dict.addString("fr");         // filter rows
 		this.cmd_dict.addString("ms");
 		this.cmd_dict.addString("mc");
 		this.cmd_dict.addString("diff");
