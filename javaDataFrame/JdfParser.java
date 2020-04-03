@@ -150,6 +150,23 @@ public class JdfParser{
 					this.err_code = 0;
 					return;
 				}
+			// rmc: remove column
+			case "rmc":
+				this.out_str = this.out_str.concat("========== REMOVE COLUMN ==========\n");
+				col_name = this.keyarg;
+				this.out_str = this.out_str.concat("Removing column ").concat(col_name).concat(" from current table.\n");
+				if (!this.jdf.hasColByName(col_name))
+				{
+					this.out_str = this.out_str.concat("ERROR: Invalid column name.\n");
+					this.err_level = 1;
+					this.err_code = 3; // invalid column name
+					return;
+				}
+				this.jdf.removeColumn(col_name);
+				this.out_str = this.out_str.concat("DONE.\n");
+				this.err_level = 0;
+				this.err_code = 0;
+				return;
 			case "ms":
 				this.out_str = this.out_str.concat("========== MATH OP. WITH SCALAR ==========\n");
 				key_split = this.keyarg.split("=");
@@ -652,6 +669,7 @@ public class JdfParser{
 	{
 		this.cmd_dict.addString("f");          // filter by string value
 		this.cmd_dict.addString("fr");         // filter rows
+		this.cmd_dict.addString("rmc");	       // remove column by name
 		this.cmd_dict.addString("ms");
 		this.cmd_dict.addString("mc");
 		this.cmd_dict.addString("diff");
