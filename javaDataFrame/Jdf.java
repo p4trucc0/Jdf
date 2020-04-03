@@ -777,6 +777,11 @@ public class Jdf{
 			return;
 		}
 
+		public String getParse(int ind)
+		{
+			return this.retrieveParse(ind, 0, false);
+		}
+
 		// Gets element from specified position and returns it as string (no decimals)
 		public String retrieveParse(int ind, int out_len, boolean double_as_int) // out_len: length of the output string.
 		{
