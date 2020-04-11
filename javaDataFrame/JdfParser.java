@@ -676,9 +676,75 @@ public class JdfParser{
 					this.out_str = this.out_str.concat("========== RESET OPERATION ==========\n");
 					this.out_str = this.out_str.concat("Resetting current table to an empty one.\n");
 					this.out_str = this.out_str.concat("DONE.\n");
+					this.jdf = new Jdf();
 					this.err_code = 0;
 					this.err_level = 0;
 					return;
+				// nc: create new column.
+				case "nc":
+				this.out_str = this.out_str.concat("========== NEW EMPTY COLUMN ==========\n");
+				key_split = this.keyarg.split(";");
+				if (key_split.length < 2)
+				{
+					this.out_str = this.out_str.concat("ERROR: wrong number of arguments.\n");
+					this.err_level = 1;
+					this.err_code = 2; // wrong number of args.
+					return;
+				} 
+				else
+				{
+					col_name = key_split[0];
+					String col_type = key_split[1];
+					this.out_str = this.out_str.concat("Creating new column of type ").concat(col_type).concat(", named ").concat(col_name).concat(".\n");
+					valid_col_name = !this.jdf.hasColByName(col_name); // Check if column already there.
+					if (!valid_col_name)
+					{
+						this.out_str = this.out_str.concat("ERROR: Invalid target column name (Already taken!).\n");
+						this.err_level = 1;
+						this.err_code = 6; // invalid column name - already taken.
+						return;
+					}
+					else
+					{
+						if (col_type.equalsIgnoreCase("double"))
+						{
+							this.jdf.addEmptyColumn(col_name, "Double");
+							this.err_level = 0;
+							this.err_code = 0;
+							this.out_str = this.out_str.concat("Done.\n");
+							return;
+						}
+						else
+						{
+							if (col_type.equalsIgnoreCase("integer"))
+							{
+								this.jdf.addEmptyColumn(col_name, "Integer");
+								this.err_level = 0;
+								this.err_code = 0;
+								this.out_str = this.out_str.concat("Done.\n");
+								return;
+							}
+							else
+							{
+								if (col_type.equalsIgnoreCase("string"))
+								{
+									this.jdf.addEmptyColumn(col_name, "String");
+									this.err_level = 0;
+									this.err_code = 0;
+									this.out_str = this.out_str.concat("Done.\n");
+									return;
+								}
+								else
+								{
+									this.out_str = this.out_str.concat("ERROR: Unknown or unrecognized type.\n");
+									this.err_level = 1;
+									this.err_code = 20; // unrecognized type
+									return;
+								}
+							}
+						}
+					}
+				}
 				// print "pretty string" - NO typical output; special case.
 				case "print":
 					int pslen = 25;
@@ -726,6 +792,7 @@ public class JdfParser{
 		this.cmd_dict.addString("load");
 		this.cmd_dict.addString("save");
 		this.cmd_dict.addString("reset");      // reset to empty table.
+		this.cmd_dict.addString("nc");         // create new (empty) column.
 		// special case!
 		this.cmd_dict.addString("print");
 	}
