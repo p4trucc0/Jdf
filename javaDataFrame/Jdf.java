@@ -90,6 +90,7 @@ public class Jdf{
 		}
 	}
 
+	// Safe method.
 	public void setParse(String cname, int ind, String s2add)
 	{
 		if (!this.hasColByName(cname))
@@ -99,6 +100,49 @@ public class Jdf{
 		else
 		{
 			this.getColByName(cname).setParse(ind, s2add);
+			return;
+		}
+	}
+
+	// Override by default
+	public void setParseOverride(String cname, int ind, String s2add)
+	{
+		if (!this.hasColByName(cname))
+		{
+			return;
+		}
+		else
+		{
+			if (ind < this.rows)
+			{
+				this.getColByName(cname).setParse(ind, s2add);
+			}
+			else // must fill other columns, too.
+			{
+				int n = this.Columns.size(); 
+				int i;
+				for (i = 0; i < n; i++)
+				{
+					//System.out.printf("Column %s:\n", this.ColumnNames.get(i));
+					if (this.ColumnNames.get(i).equals(cname))
+					{
+						this.Columns.get(i).setParseOverride(ind, s2add);
+					}
+					else
+					{
+						if (this.Columns.get(i).type.equals("String"))
+						{
+							this.Columns.get(i).setParseOverride(ind, "");
+						}
+						else
+						{
+							this.Columns.get(i).setParseOverride(ind, "NaN");
+						}
+					}
+					//this.Columns.get(i).printRaw();
+				}
+				this.rows = ind + 1;
+			}
 			return;
 		}
 	}
