@@ -672,6 +672,11 @@ public class JdfParser{
 							this.err_code = 12; // invalid output file format.
 							return;
 					}
+				case "reset":
+					this.out_str = this.out_str.concat("========== RESET OPERATION ==========\n");
+					this.out_str = this.out_str.concat("Resetting current table to an empty one.\n");
+					this.out_str = this.out_str.concat("DONE.\n");
+					return;
 				// print "pretty string" - NO typical output; special case.
 				case "print":
 					int pslen = 25;
@@ -711,13 +716,14 @@ public class JdfParser{
 		this.cmd_dict.addString("fr");         // filter rows
 		this.cmd_dict.addString("rmc");	       // remove column by name
 		this.cmd_dict.addString("fillna");     // replace NaN values with arbitrary values.
-		this.cmd_dict.addString("ms");
-		this.cmd_dict.addString("mc");
-		this.cmd_dict.addString("diff");
-		this.cmd_dict.addString("csum");
-		this.cmd_dict.addString("stat");
+		this.cmd_dict.addString("ms");         // math operation between a column and a scalar
+		this.cmd_dict.addString("mc");		   // math operation involving two columns
+		this.cmd_dict.addString("diff");	   // diff operation over one column
+		this.cmd_dict.addString("csum");	   // cumulated sum of one column
+		this.cmd_dict.addString("stat");	   // statistical calculations
 		this.cmd_dict.addString("load");
 		this.cmd_dict.addString("save");
+		this.cmd_dict.addString("reset");      // reset to empty table.
 		// special case!
 		this.cmd_dict.addString("print");
 	}
