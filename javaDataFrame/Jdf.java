@@ -827,6 +827,23 @@ public class Jdf{
 			return;
 		}
 
+		// adds element even if outside bounds.
+		public void setParseOverride(int ind, String s2set)
+		{
+			while (ind >= this.numel)
+			{
+				if (this.type == "String")
+				{
+					this.addParse(""); // check behavior with Double
+				}
+				else
+				{
+					this.addParse("NaN");
+				}
+			}
+			this.setParse(ind, s2set);
+		}
+
 		public String getParse(int ind)
 		{
 			return this.retrieveParse(ind, 0, false);
