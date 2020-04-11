@@ -772,11 +772,78 @@ public class JdfParser{
 					}
 					else
 					{
-						int ind_to_get = Integer.parseInt(str_ind);
+						int ind_to_get = 0;
+						try
+						{
+							ind_to_get = Integer.parseInt(str_ind);
+						} catch (NumberFormatException e)
+						{
+							this.out_str = this.out_str.concat("ERROR: Invalid index.\n");
+							this.err_level = 2;
+							this.err_code = 32; // invalid source column name.
+							return;
+						}
 						if ((ind_to_get >= 0) && (ind_to_get < this.jdf.rows))
 						{
 							String res_get = this.jdf.getColByName(col_name).getParse(ind_to_get);
 							this.out_str = this.out_str.concat("Result: ").concat(res_get).concat("\n");
+							this.out_str = this.out_str.concat("DONE.\n");
+							this.err_level = 0;
+							this.err_code = 0;
+							return;
+						}
+						else
+						{
+							this.out_str = this.out_str.concat("ERROR: Index is out of bounds.\n");
+							this.err_level = 1;
+							this.err_code = 31; // index out of bounds.
+							return;
+						}
+					}
+				}
+				// set element
+				case "set":
+				this.out_str = this.out_str.concat("========== SET ELEMENT ==========\n");
+				key_split = this.keyarg.split(";");
+				if (key_split.length < 3) //ok
+				{
+					this.out_str = this.out_str.concat("ERROR: wrong number of arguments.\n");
+					this.err_level = 1;
+					this.err_code = 2; // wrong number of args.
+					return;
+				} 
+				else
+				{
+					col_name = key_split[0];
+					String str_ind = key_split[1]; // index.
+					String str_val = key_split[2]; // value.
+					this.out_str = this.out_str.concat("Setting element from column ").concat(col_name);
+					this.out_str = this.out_str.concat(" at index ").concat(str_ind);
+					this.out_str = this.out_str.concat(" to ").concat(str_val).concat(".\n");
+					valid_col_name = this.jdf.hasColByName(col_name); // Check if column already there.
+					if (!valid_col_name) //ok.
+					{
+						this.out_str = this.out_str.concat("ERROR: Invalid target column name.\n");
+						this.err_level = 1;
+						this.err_code = 3; // invalid source column name.
+						return;
+					}
+					else
+					{
+						int ind_to_set = 0;
+						try
+						{
+							ind_to_set = Integer.parseInt(str_ind);
+						} catch (NumberFormatException e)
+						{
+							this.out_str = this.out_str.concat("ERROR: Invalid index.\n");
+							this.err_level = 2;
+							this.err_code = 32; // invalid source column name.
+							return;
+						}
+						if ((ind_to_set >= 0))
+						{
+							this.jdf.setParseOverride(col_name, ind_to_set, str_val);
 							this.out_str = this.out_str.concat("DONE.\n");
 							this.err_level = 0;
 							this.err_code = 0;
