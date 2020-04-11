@@ -676,6 +676,8 @@ public class JdfParser{
 					this.out_str = this.out_str.concat("========== RESET OPERATION ==========\n");
 					this.out_str = this.out_str.concat("Resetting current table to an empty one.\n");
 					this.out_str = this.out_str.concat("DONE.\n");
+					this.err_code = 0;
+					this.err_level = 0;
 					return;
 				// print "pretty string" - NO typical output; special case.
 				case "print":
