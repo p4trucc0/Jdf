@@ -221,7 +221,7 @@ public class JdfParser{
 				{
 					col_name = key_split[0];
 					math_expr = key_split[1];
-					math_expr_split = math_expr.split("\\+|/|\\*|\\^|\\-");
+					math_expr_split = math_expr.split("\\+|/|\\*|\\^|\\-", 2);
 					valid_col_name = !this.jdf.hasColByName(col_name); // Check if column already there.
 					if (!valid_col_name) //ok.
 					{
@@ -948,6 +948,18 @@ public class JdfParser{
 						}
 					}
 				}
+				case "help":
+					if (!has_keyword)
+					{
+						this.out_str = this.out_str.concat(giveHelp(""));
+					}
+					else
+					{
+						this.out_str = this.out_str.concat(giveHelp(this.keyarg));
+					}
+					this.err_level = 0;
+					this.err_code = 0;
+					return;
 				// print "pretty string" - NO typical output; special case.
 				case "print":
 					int pslen = 25;
@@ -1000,8 +1012,178 @@ public class JdfParser{
 		this.cmd_dict.addString("nc");         // create new (empty) column.
 		this.cmd_dict.addString("get");		   // get element from a column at a specific index
 		this.cmd_dict.addString("set");		   // set element of a column at a specific index to a given value.
+		this.cmd_dict.addString("help");
 		// special case!
 		this.cmd_dict.addString("print");
 	}
 
+	// returns useful indications about function usage.
+	public String giveHelp(String fcn)
+	{
+		String out = "";
+		if (fcn.length() == 0) // generic help
+		{
+			out = out.concat("Jdf - Java Data Frame library by Andrea Patrucco, 2020\n");
+			out = out.concat("AVAILABLE COMMANDS:\n");
+			out = out.concat("load - Load table from URL or from local CSV file.\n");
+			out = out.concat("save - Save current table to local CSV file.\n");
+			out = out.concat("reset - Reset contents to empty table.\n");
+			out = out.concat("rmc - Remove column based on name.\n");
+			out = out.concat("nc - Create new column.\n");
+			out = out.concat("get - Retrieve element by column name and row.\n");
+			out = out.concat("set - Set element by column name, row and value.\n");
+			out = out.concat("f - Filter rows by String value.\n");
+			out = out.concat("fr - Filter rows by row index.\n");
+			out = out.concat("fillna - Replace NaN in column with given value.\n");
+			out = out.concat("ms - Math operation between all elements in a column and a scalar value.\n");
+			out = out.concat("mc - Math oepration between all elements in two columns, one by one.\n");
+			out = out.concat("diff - Calculate progressive difference between elements in a column.\n");
+			out = out.concat("drat - Calculate progressive ratio between elements in a column.\n");
+			out = out.concat("csum - Calculate cumulated sum between elements in a column.\n");
+			out = out.concat("cmlt - Calculate cumulated product between elements in a column.\n");
+			out = out.concat("stat - Perform basic statistical calculations on a column.\n");
+			out = out.concat("print - Print table contents.\n");
+		}
+		else
+		{
+			if (this.cmd_dict.hasString(fcn))
+			{
+				switch (fcn)
+				{
+					case "f":
+						out = out.concat("f - Filter rows by String value\n");
+						out = out.concat(" - USAGE: - f [column name]=[column value]\n");
+						out = out.concat(" - EXAMPLE: - f state=Italy\n");
+						out = out.concat(" - DESCRIPTION: - Only keeps rows of the current table in which the value\n");
+						out = out.concat(" -  - of the column you specified as the first argument equals to the second provided argument.\n");
+						break;
+					case "fr":
+						out = out.concat("fr - Filter rows by index\n");
+						out = out.concat(" - USAGE: - fr [start_index];[end_index]\n");
+						out = out.concat(" - EXAMPLE: - fr 0;10\n");
+						out = out.concat(" - DESCRIPTION: - Keeps the specified, consecutive rows of the current table.\n");
+						break;
+					case "load":
+						out = out.concat("load - Load table from URL or from local CSV file.\n");
+						out = out.concat(" - USAGE: - load [csv|url] [address]\n");
+						out = out.concat(" - EXAMPLE: - load url https://somesite.somecsv.csv\n");
+						out = out.concat(" - EXAMPLE: - load csv mylocalcsv.csv\n");
+						out = out.concat(" - DESCRIPTION: - Loads into current table a csv located in the public storage folder or\n");
+						out = out.concat(" -  - retrieves it from an url string.\n");
+						break;
+					case "save":
+						out = out.concat("save - Save current table to local CSV file.\n");
+						out = out.concat(" - USAGE: - save csv [address]\n");
+						out = out.concat(" - EXAMPLE: - save csv mylocalcsv.csv\n");
+						out = out.concat(" - DESCRIPTION: - Saves current table onto a csv file located in the public storage folder.\n");
+						break;
+					case "reset":
+						out = out.concat("reset - Reset contents to empty table.\n");
+						out = out.concat(" - USAGE: reset\n");
+						out = out.concat(" - DESCRIPTION: - Resets current table contents to empty.\n");
+						break;
+					case "rmc":
+						out = out.concat("rmc - Remove column based on name.\n");
+						out = out.concat(" - USAGE: - rmc [column name]\n");
+						out = out.concat(" - EXAMPLE: - rmc daily_increase\n");
+						out = out.concat(" - DESCRIPTION: - Removes the specified column from the current table.\n");
+						break;
+					case "nc":
+						out = out.concat("nc - Create new column.\n");
+						out = out.concat(" - USAGE: - nc [new column name];[double|string]\n");
+						out = out.concat(" - EXAMPLE: - nc cash_flow;double\n");
+						out = out.concat(" - EXAMPLE: - nc surname;string\n");
+						out = out.concat(" - DESCRIPTION: - Create a new column of empty elements of the specified type (string/double).\n");
+						break;
+					case "get":
+						out = out.concat("get - Retrieve element.\n");
+						out = out.concat(" - USAGE: - get [column name];[row]\n");
+						out = out.concat(" - EXAMPLE: - get cash_flow;2\n");
+						out = out.concat(" - DESCRIPTION: - Prints the content of specified column name at the specified row index.\n");
+						break;
+					case "set":
+						out = out.concat("set - Assign element to specified position.\n");
+						out = out.concat(" - USAGE: - set [column name];[row];[new value]\n");
+						out = out.concat(" - EXAMPLE: - set cash_flow;2;1001.85\n");
+						out = out.concat(" - EXAMPLE: - set surname;33;Brown\n");
+						out = out.concat(" - DESCRIPTION: - Sets a new value at the specified column and row.\n");
+						break;
+					case "fillna":
+						out = out.concat("fillna - Replace NaN elements with a given value.\n");
+						out = out.concat(" - USAGE: - fillna [column name] - or - fillna [column name];[new value]\n");
+						out = out.concat(" - EXAMPLE: - fillna new_ratio\n");
+						out = out.concat(" - EXAMPLE: - fillna new_ratio;1.0\n");
+						out = out.concat(" - DESCRIPTION: - Replaces NaN value in a column with a specified amount.\n");
+						out = out.concat(" -  - In case no amount is provided by the user, it defaults to 0.0.\n");
+						break;
+					case "ms":
+						out = out.concat("ms - Math operation between a column and a scalar.\n");
+						out = out.concat(" - USAGE: - ms [destination column name]=[source column name][*|+|/|-|^][scalar value]\n");
+						out = out.concat(" - EXAMPLE: - ms percentage=fraction*100.0\n");
+						out = out.concat(" - EXAMPLE: - ms double_cflow=cash_flow*2\n");
+						out = out.concat(" - DESCRIPTION: - Applies the specified math operation involving a scalar to all elements of a column.\n");
+						break;
+					case "mc":
+						out = out.concat("ms - Math operation between two columns.\n");
+						out = out.concat(" - USAGE: - mc [destination column name]=[source column name (1)][*|+|/|-|^][source column name (2)]\n");
+						out = out.concat(" - EXAMPLE: - ms success=positive/tested\n");
+						out = out.concat(" - EXAMPLE: - ms profit=income-losses\n");
+						out = out.concat(" - DESCRIPTION: - Applies the specified math operation, rob by row, to elements of two columns.\n");
+						break;
+					case "diff":
+						out = out.concat("diff - Difference between a column's elements.\n");
+						out = out.concat(" - USAGE: - diff [destination column name];[source column name]\n");
+						out = out.concat(" - EXAMPLE: - diff daily_increase;units_per_day\n");
+						out = out.concat(" - DESCRIPTION: - Stores the difference between each element of a source column and the preceiding\n");
+						out = out.concat(" -  - one into a new column.\n");
+						break;
+					case "drat":
+						out = out.concat("drat - Progressive ratio between a column's elements.\n");
+						out = out.concat(" - USAGE: - drat [destination column name];[source column name]\n");
+						out = out.concat(" - EXAMPLE: - drat growth_rate;units_per_day\n");
+						out = out.concat(" - DESCRIPTION: - Stores the ratio between each element of a source column and the preceiding\n");
+						out = out.concat(" -  - one into a new column.\n");
+						break;
+					case "csum":
+						out = out.concat("csum - Cumulated sum of a column's elements.\n");
+						out = out.concat(" - USAGE: - csum [destination column name];[source column name]\n");
+						out = out.concat(" - EXAMPLE: - csum sold_subtotal;daily_sold\n");
+						out = out.concat(" - DESCRIPTION: - Stores the cumulated sum of each element of a source column up to the current\n");
+						out = out.concat(" -  - one into a new column.\n");
+						break;
+					case "cmlt":
+						out = out.concat("cmlt - Cumulated product of a column's elements.\n");
+						out = out.concat(" - USAGE: - cmlt [destination column name];[source column name]\n");
+						out = out.concat(" - EXAMPLE: - cmlt inflation_from_year0;yearly_inflation\n");
+						out = out.concat(" - DESCRIPTION: - Stores the cumulated product of each element of a source column up to the current\n");
+						out = out.concat(" -  - one into a new column.\n");
+						break;
+					case "stat":
+						out = out.concat("stat - Perform a statistical calculation on a column's elements.\n");
+						out = out.concat(" - USAGE: - stat [mean|std|var]-[source column name]\n");
+						out = out.concat(" - USAGE: - stat corr-[source column name(1)];[source column name(2)]\n");
+						out = out.concat(" - EXAMPLE: - stat mean-cash_flow\n");
+						out = out.concat(" - EXAMPLE: - stat std-cash_flow\n");
+						out = out.concat(" - EXAMPLE: - stat corr-umbrellas_sold;rain_fallen\n");
+						out = out.concat(" - DESCRIPTION: - Calculates and prints a statistical index concerning one or two specified column(s).\n");
+						break;
+					case "print":
+						out = out.concat("print - Prints current table to screen.\n");
+						out = out.concat(" - USAGE: print\n");
+						out = out.concat(" - USAGE: print [col_width]\n");
+						out = out.concat(" - DESCRIPTION: - Prints table to screen. In case an integer is specified, that becomes the minimum\n");
+						out = out.concat(" -  - characters to represent a column (changes width).\n");
+						break;
+					default:
+						out = out.concat("Sorry, the command you typed exists, but its usage is still undocumented.\n");
+						break;
+				}
+			}
+			else
+			{
+				out = out.concat("Sorry, the command you're asking for does not exist.\n");
+			}
+		}
+		return out;
+	}
 }
