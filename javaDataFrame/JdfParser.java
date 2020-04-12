@@ -490,6 +490,96 @@ public class JdfParser{
 						}
 					}
 				}
+			// drat: differential ratio
+			case "drat":
+				this.out_str = this.out_str.concat("========== DIFF. RATIO OPERATION ==========\n");
+				key_split = this.keyarg.split(";");
+				if (key_split.length < 2)
+				{
+					this.out_str = this.out_str.concat("ERROR: wrong number of arguments.\n");
+					this.err_level = 1;
+					this.err_code = 2; // wrong number of args.
+					return;
+				} 
+				else
+				{
+					dst_col_name = key_split[0];
+					src_col_name = key_split[1];
+					this.out_str = this.out_str.concat("Defining new column ").concat(dst_col_name).concat(" as diff. ratio of column ").concat(src_col_name).concat(".\n");
+					//boolean valid_col_name = ((!this.jdf.hasColByName(dst_col_name)) && (this.jdf.hasColByNameAndType(src_col1_name, "Double")));
+					boolean valid_dst_col_name = !this.jdf.hasColByName(dst_col_name);
+					if (!valid_dst_col_name) 
+					{
+						this.out_str = this.out_str.concat("ERROR: Invalid target column name (Already taken!).\n");
+						this.err_level = 1;
+						this.err_code = 6; // invalid column name - already taken.
+						return;
+					}
+					else
+					{
+						boolean valid_src_col_name = this.jdf.hasColByNameAndType(src_col_name, "Double");
+						if (!valid_src_col_name) 
+						{
+							this.out_str = this.out_str.concat("ERROR: Invalid source column name (non-existent or invalid type).\n");
+							this.err_level = 1;
+							this.err_code = 3; // invalid column name
+							return;
+						}
+						else
+						{
+							this.jdf.dratColumn(dst_col_name, src_col_name);
+							this.out_str = this.out_str.concat("DONE.\n");
+							this.err_level = 0;
+							this.err_code = 0;
+							return;
+						}
+					}
+				}
+			// cmlt: cumulated multiplication.
+			case "cmlt":
+				this.out_str = this.out_str.concat("========== CUMULATIVE PROD. OPERATION ==========\n");
+				key_split = this.keyarg.split(";");
+				if (key_split.length < 2)
+				{
+					this.out_str = this.out_str.concat("ERROR: wrong number of arguments.\n");
+					this.err_level = 1;
+					this.err_code = 2; // wrong number of args.
+					return;
+				} 
+				else
+				{
+					dst_col_name = key_split[0];
+					src_col_name = key_split[1];
+					this.out_str = this.out_str.concat("Defining new column ").concat(dst_col_name).concat(" as cumulated product of column ").concat(src_col_name).concat(".\n");
+					//boolean valid_col_name = ((!this.jdf.hasColByName(dst_col_name)) && (this.jdf.hasColByNameAndType(src_col1_name, "Double")));
+					boolean valid_dst_col_name = !this.jdf.hasColByName(dst_col_name);
+					if (!valid_dst_col_name) 
+					{
+						this.out_str = this.out_str.concat("ERROR: Invalid target column name (Already taken!).\n");
+						this.err_level = 1;
+						this.err_code = 6; // invalid column name - already taken.
+						return;
+					}
+					else
+					{
+						boolean valid_src_col_name = this.jdf.hasColByNameAndType(src_col_name, "Double");
+						if (!valid_src_col_name) 
+						{
+							this.out_str = this.out_str.concat("ERROR: Invalid source column name (non-existent or invalid type).\n");
+							this.err_level = 1;
+							this.err_code = 3; // invalid column name
+							return;
+						}
+						else
+						{
+							this.jdf.cmltColumn(dst_col_name, src_col_name);
+							this.out_str = this.out_str.concat("DONE.\n");
+							this.err_level = 0;
+							this.err_code = 0;
+							return;
+						}
+					}
+				}
 			// STAT: Calcoli statistici
 			case "stat":
 				this.out_str = this.out_str.concat("========== STATISTIC CALCULATION ==========\n");
@@ -901,6 +991,8 @@ public class JdfParser{
 		this.cmd_dict.addString("mc");		   // math operation involving two columns
 		this.cmd_dict.addString("diff");	   // diff operation over one column
 		this.cmd_dict.addString("csum");	   // cumulated sum of one column
+		this.cmd_dict.addString("drat");	   // diff operation over one column
+		this.cmd_dict.addString("cmlt");	   // cumulated sum of one column
 		this.cmd_dict.addString("stat");	   // statistical calculations
 		this.cmd_dict.addString("load");
 		this.cmd_dict.addString("save");

@@ -452,7 +452,7 @@ public class Jdf{
 			out = out.concat(pri);
 			for (i_c = 0; i_c < n_c; i_c++)
 			{
-				prv = this.Columns.get(i_c).retrieveParse(i_r, c_width, true);
+				prv = this.Columns.get(i_c).retrieveParse(i_r, c_width, false);
 				out = out.concat(prv.concat(" "));
 			}
 			out = out.concat("\n");
