@@ -481,7 +481,10 @@ public class Jdf{
 				out = out.concat(prv);
 			}
 		}
-		out = out.concat("\n");
+		if (n_c > 0)
+		{
+			out = out.concat("\n");
+		}
 		// down to rows.
 		for (i_r = 0; i_r < this.rows; i_r++)
 		{
@@ -630,7 +633,12 @@ public class Jdf{
 				lines_read++;
 			}
 		} while (linea != null);
-		this.rows = lines_read - 1;
+		if (lines_read > 0)
+		{
+			this.rows = lines_read - 1;
+		} else {
+			this.rows = 0;
+		}
 		return;
 	}
 
