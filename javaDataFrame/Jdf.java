@@ -497,7 +497,10 @@ public class Jdf{
 					out = out.concat(prv);
 				}
 			}
-			out = out.concat("\n");
+			if (i_r < this.rows - 1) // do not create final newline
+			{
+				out = out.concat("\n");
+			}
 		}
 		return out;
 	}
