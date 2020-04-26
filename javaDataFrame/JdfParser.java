@@ -131,7 +131,7 @@ public class JdfParser{
 						this.err_code = 12; // Empty interval
 						return;
 					}
-					if (r1i >= this.jdf.rows)
+					if (r1i > this.jdf.rows)
 					{
 						this.out_str = this.out_str.concat("ERROR: End index is out of bounds.\n");
 						this.err_level = 1;
